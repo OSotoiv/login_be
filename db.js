@@ -1,6 +1,7 @@
 "use strict";
 
 const { Client } = require("pg");
+require('dotenv').config();
 
 function getDatabaseUri() {
     return (process.env.NODE_ENV === "test")
@@ -15,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
         user: process.env.DB_USER,
         host: 'localhost',
         database: getDatabaseUri(),
-        password: "Band042410",
+        password: process.env.DB_PASSWORD,
         ssl: {
             rejectUnauthorized: false
         }
@@ -25,7 +26,7 @@ if (process.env.NODE_ENV === "production") {
         user: process.env.DB_USER,
         host: 'localhost',
         database: getDatabaseUri(),
-        password: "Band042410",
+        password: process.env.DB_PASSWORD,
     });
 }
 
