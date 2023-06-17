@@ -1,35 +1,12 @@
 "use strict";
 
 const { Client } = require("pg");
-require('dotenv').config();
+const { DB_URI } = require('./config')
 
-function getDatabaseUri() {
-    return (process.env.NODE_ENV === "test")
-        ? "usersdb_test"
-        : process.env.DATABASE_URL || "usersdb";
-}
 
-let db;
-
-if (process.env.NODE_ENV === "production") {
-    db = new Client({
-        user: process.env.DB_USER,
-        host: 'localhost',
-        database: getDatabaseUri(),
-        password: process.env.DB_PASSWORD,
-        ssl: {
-            rejectUnauthorized: false
-        }
-    });
-} else {
-    db = new Client({
-        user: process.env.DB_USER,
-        host: 'localhost',
-        database: getDatabaseUri(),
-        password: process.env.DB_PASSWORD,
-    });
-}
+const SECRET_KEY = process.env.SALT_KEY || "secret";
+const BCRYPT_WORK_FACTOR = 12;
+const db = new Client(DB_URI);
 
 db.connect();
-
 module.exports = db;

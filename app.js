@@ -1,7 +1,9 @@
 const express = require('express');
 const { ExpressError } = require('./expressErrors');
-const authRoute = require('./routes/auth')
 const User = require('./models/Users')
+//routes
+const authRoute = require('./routes/authRoute');
+
 
 const app = express();
 app.use(express.json())
@@ -18,13 +20,6 @@ app.get("/users", async (req, res, next) => {
         }
 })
 
-
-
-
-
-
-
-
 //catch all for page not found
 app.use((req, res, next) => {
         const err = new ExpressError(404, 'Page Not Found');
@@ -36,6 +31,5 @@ app.use((err, req, res, next) => {
         const status = err.status || 500;
         return res.status(status).json({ error: msg })
 })
-//server
-app.listen(3000, () => console.log('http://localhost:3000/'))
-module.exports = { app }
+
+module.exports = app;
