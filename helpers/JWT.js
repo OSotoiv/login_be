@@ -9,7 +9,7 @@ function createToken(user) { //NOTES.md #002
 
     let payload = {
         username: user.username,
-        role: user.role,
+        email: user.email,
         isAdmin: user.isAdmin || false
     };
 

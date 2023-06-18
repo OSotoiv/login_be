@@ -21,6 +21,7 @@ function authenticateJWT(req, res, next) {
         if (authHeader) {
             const token = authHeader.replace(/^[Bb]earer /, "").trim();
             res.locals.user = jwt.verify(token, SECRET_KEY);
+            console.log(res.locals.user)
             //EXAMPLE::res.locals.user => { username: 'Octavian', isAdmin: false, iat: 1687039597 }
         }
         return next();
@@ -50,7 +51,7 @@ function sameUserOrAdmin(req, res, next) {
             return next();
         } else {
             //check if you are admin status
-            return isCreator(req, res, next);
+            return isAdmin(req, res, next);
         }
         return next({ status: 401, message: "Unauthorized" });
     } catch (err) {
@@ -59,9 +60,9 @@ function sameUserOrAdmin(req, res, next) {
     }
 }
 
-function isCreator(req, res, next) {
+function isAdmin(req, res, next) {
     try {
-        if (res.locals.user.role === 'creator') {
+        if (res.locals.user.isAdmin === true) {
             return next();
         }
         throw new UnauthorizedError();
@@ -72,6 +73,6 @@ function isCreator(req, res, next) {
 module.exports = {
     authenticateJWT,
     ensureLoggedIn,
-    isCreator,
+    isAdmin,
     sameUserOrAdmin
 };

@@ -55,9 +55,10 @@ class User {
         const result = await db.query(
             `SELECT username,
                 password,
-                email
+                email,
+                is_admin as "isAdmin"
                 FROM users
-                WHERE username = $1`,
+                WHERE username = $1;`,
             [username],
         );
 
