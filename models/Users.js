@@ -4,11 +4,20 @@ const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require('../config')
 
 class User {
-    constructor() {
-
+    constructor(username = "") {
+        this.username = username
     }
+    static async get(username) {
+        const results = await db.query(`SELECT username, email, joined_at FROM users WHERE username = $1`, [username]);
+        const user = results.rows[0];
+        if (user) {
+            return user;
+        }
+        throw new UnauthorizedError(`${username} not found`)
+    }
+
     static async all() {
-        const results = await db.query(`SELECT * FROM users;`);
+        const results = await db.query(`SELECT username FROM users;`);
         if (results.rows[0]) {
             return results.rows;
         }
@@ -28,9 +37,9 @@ class User {
             throw new ExpressError('Failed to register user');
         } catch (e) {
             if (e.code === '23505') {
-                return next(new ExpressError('Username Taken, Please Pick another', 400))
+                throw new ExpressError('Username/email Taken, Please Pick another', 400);
             } else {
-                return next(e);
+                throw new ExpressError('something went wrong', 400);
             }
 
         }

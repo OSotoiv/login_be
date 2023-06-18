@@ -3,26 +3,29 @@ const { ExpressError } = require('./expressErrors');
 const User = require('./models/Users')
 //routes
 const authRoute = require('./routes/authRoute');
+const userRoute = require('./routes/userRoute')
+
+const { authenticateJWT } = require('./middleware/authMiddleware')
 
 
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(authenticateJWT);
 
+app.get("/", (req, res) => {
+        console.log('headers', req.headers)
+        console.log("headers.auth", req.headers.authorization)
+        return res.json({ hello: 'world' });
+});
 app.use('/auth', authRoute)
+app.use('/user', userRoute)
 
-app.get("/users", async (req, res, next) => {
-        try {
-                const users = await User.all();
-                return res.json({ users })
-        } catch (e) {
-                return next(e)
-        }
-})
 
 //catch all for page not found
-app.use((req, res, next) => {
-        const err = new ExpressError(404, 'Page Not Found');
+app.use("*", (req, res, next) => {
+        console.log('here')
+        const err = new ExpressError('Page Not Found', 400);
         return next(err);
 })
 //handle error response
